@@ -99,7 +99,7 @@ X_n1_1 = Scaler.transform(X_n1)
 ai.predict(X_n1_1)
 ```
 
-## Dataset Information
+## Dataset Information 
 
 ![Screenshot 2023-08-19 104735](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/5431e236-db62-4583-987c-ca750424fede)
 
