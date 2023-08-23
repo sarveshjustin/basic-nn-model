@@ -4,8 +4,11 @@
 
 To develop a neural network regression model for the given dataset.
 
+## Theory
+We create a simple dataset with one input and one output. This data is then divided into testing and training sets for our Neural Network Model to train and test on. The NN Model contains input layer, 2 nodes/neurons in the hidden layer which is then connected to the final output layer with one node/neuron. The Model is then compiled with an loss function and Optimizer, here we use MSE and rmsprop. 
+
 ## Neural Network Model
-![Screenshot 2023-08-19 105259](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/bc437955-f096-40ae-96cb-98118f06a8b7)
+![Screenshot 2023-08-23 205011](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/8ce730be-da87-4781-9baf-ffc0db8e0f31)
 
 
 
@@ -41,77 +44,77 @@ Evaluate the model with the testing data.
 
 ## PROGRAM
 ```
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-
 from google.colab import auth
 import gspread
 from google.auth import default
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 
 auth.authenticate_user()
 creds, _ = default()
 gc = gspread.authorize(creds)
 
-worksheet = gc.open('sar1').sheet1
-data = worksheet.get_all_values()
-df = pd.DataFrame(data[1:], columns=data[0])
-df = df.astype({'Input':'float'})
-df = df.astype({'Output':'float'})
+worksheet = gc.open('dataset').sheet1
+rows = worksheet.get_all_values()
+df = pd.DataFrame(rows[1:], columns=rows[0])
+
 df.head()
 
-X = df[['Input']].values
-y = df[['Output']].values
-X
+df=df.astype({'X':'float'})
+df=df.astype({'Y':'float'})
+df.dtypes
 
-X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.33,random_state = 33)
-Scaler = MinMaxScaler()
-Scaler.fit(X_train)
-X_train1 = Scaler.transform(X_train)
-X_train1
+X=df[['X']].values
+Y=df[['Y']].values
 
-ai=Sequential([
-    Dense(7,activation='relu'),
-    Dense(6,activation='relu'),
-    Dense(1)
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.33,random_state=50)
+
+scaler=MinMaxScaler()
+scaler.fit(X_train)
+
+X_train_scaled=scaler.transform(X_train)
+
+ai_brain=Sequential([
+    Dense(2,activation='relu'),
+    Dense(1,activation='relu')
 ])
-ai.compile(optimizer='rmsprop',loss='mse')
-ai.fit(X_train1,y_train,epochs=2000)
-ai.fit(X_train1,y_train,epochs=2000)
+ai_brain.compile(optimizer='rmsprop',loss='mse')
+ai_brain.fit(x=X_train_scaled,y=Y_train,epochs=20000)
 
-## Plot the loss
-loss_df = pd.DataFrame(ai.history.history)
+loss_df=pd.DataFrame(ai_brain.history.history)
 loss_df.plot()
 
-## Evaluate the model
-X_test1 = Scaler.transform(X_test)
-ai.evaluate(X_test1,y_test)
+X_test_scaled=scaler.transform(X_test)
+ai_brain.evaluate(X_test_scaled,Y_test)
 
-# Prediction
-X_n1 = [[30]]
-X_n1_1 = Scaler.transform(X_n1)
-ai.predict(X_n1_1)
+prediction_test=int(input("Enter the value to predict: "))
+preds=ai_brain.predict(scaler.transform([[prediction_test]]))
+print("The prediction for the given input "+str(prediction_test)+" is: "+str(preds))
 ```
 
 ## Dataset Information 
+<img width="81" alt="2" src="https://github.com/sarveshjustin/basic-nn-model/assets/113497481/42f42bcf-292a-4135-a4ae-4b3177dd4366">
 
-![Screenshot 2023-08-19 104735](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/5431e236-db62-4583-987c-ca750424fede)
 
 
 ## OUTPUT
+![3](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/5c2e7d85-7029-4e39-967d-77980bb1d2e1)
 
-![Screenshot 2023-08-19 104806](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/f19e8230-5aa0-46fb-a5aa-7f908f13d3e9)
+
 ### Test Data Root Mean Squared Error
 
-![Screenshot 2023-08-19 104854](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/a9e2420c-3027-47e2-963d-b3c9d9762ff3)
+<img width="482" alt="4" src="https://github.com/sarveshjustin/basic-nn-model/assets/113497481/c489b645-6e49-43f3-aae4-d09449ae37ed">
+
+
 
 
 ### New Sample Data Prediction
+<img width="348" alt="5" src="https://github.com/sarveshjustin/basic-nn-model/assets/113497481/5f83e808-315d-427b-924e-b288f49711f3">
 
-![Screenshot 2023-08-19 104917](https://github.com/sarveshjustin/basic-nn-model/assets/113497481/d10284ed-4c92-4f06-82ab-a394808b754d)
 
 
 ## RESULT
